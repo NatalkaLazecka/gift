@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Pacifico', cursive;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f8ff;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .card {
+      width: 300px;
+      background-color: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      transform: perspective(1000px);
+      transition: transform 1s;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    .card:hover {
+      transform: perspective(1000px) rotateY(15deg) rotateX(5deg);
+    }
+
+    .card-inner {
+      padding: 20px;
+      text-align: center;
+    }
+
+    .card h1 {
+      color: #FF69B4;
+      font-style: italic;
+    }
+
+    .card p {
+      font-size: 18px;
+    }
+
+    .balloon,
+    .polaroid {
+      position: absolute;
+      transition: transform 0.5s;
+      cursor: pointer;
+    }
+
+    .balloon {
+      width: 60px;
+      height: 80px;
+      background-color: red;
+      border-radius: 50%;
+    }
+
+    .balloon::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -20px;
+      width: 2px;
+      height: 40px;
+      background-color: gray;
+      transform: translateX(-50%);
+    }
+
+    .polaroid {
+      width: 120px;
+      height: 150px;
+      background: white;
+      padding: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    .polaroid img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    .polaroid p {
+      margin: 0;
+      padding-top: 10px;
+      font-size: 10px;
+      text-align: center;
+      font-style: italic;
+    }
+  </style>
+</head>
+
+<body>
+<div class="card">
+  <div class="card-inner">
+    <h1>WSZYSTKIEGO NAJLEPSZEGO KAROL!</h1>
+    <p class="message">Wszystkiego najlepszego z okazji Twoich urodzin! Mam nadzieję, że ten dzień będzie dla
+      Ciebie wyjątkowy.<br>
+      Bardzo Cię kocham, zasługujesz na wszystko co najlepsze!<br><br>
+      Twoja Natalka.</p>
+  </div>
+</div>
+
+<script src="https://unpkg.com/heic2any/dist/heic2any.min.js"></script>
+<script>
+  const colors = ["#FF69B4", "#87CEEB", "#FFA500", "#32CD32", "#FFD700"]; // Kolory balonów
+  const images = [
+    { src: "image1.jpg", caption: "Wspomnienie 1" },
+    { src: "image2.jpg", caption: "Wspomnienie 2" },
+    { src: "image3.HEIC", caption: "Wspomnienie 3" },
+    { src: "image4.HEIC", caption: "Wspomnienie 4" },
+    { src: "image5.HEIC", caption: "Wspomnienie 5" }, ,
+    { src: "image8.jpeg", caption: "Wspomnienie 8" },
+  ];
+
+  function createBalloon() {
+    const balloon = document.createElement('div');
+    balloon.classList.add('balloon');
+    balloon.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)]; // Losowy kolor
+    balloon.style.left = Math.random() * 100 + 'vw'; // Losowa pozycja w poziomie
+    balloon.style.top = Math.random() * 100 + 'vh'; // Losowa pozycja w pionie
+
+    // Dodajemy efekt przesuwania się po najechaniu myszką
+    balloon.addEventListener('mouseover', () => {
+      balloon.style.transform = `translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 - 100}px)`;
+    });
+
+    document.body.appendChild(balloon);
+  }
+
+  async function createPolaroid(src, caption) {
+    const polaroid = document.createElement('div');
+    polaroid.classList.add('polaroid');
+    polaroid.style.left = Math.random() * 100 + 'vw'; // Losowa pozycja w poziomie
+    polaroid.style.top = Math.random() * 100 + 'vh'; // Losowa pozycja w pionie
+
+    const image = document.createElement('img');
+
+    if (src.endsWith('.HEIC')) {
+      try {
+        const response = await fetch(src);
+        const blob = await response.blob();
+        const conversionResult = await heic2any({ blob, toType: "image/jpeg" });
+        const imgURL = URL.createObjectURL(conversionResult);
+        image.src = imgURL;
+      } catch (error) {
+        console.error("Error converting HEIC image:", error);
+      }
+    } else {
+      image.src = src;
+    }
+
+    const text = document.createElement('p');
+    text.textContent = caption;
+
+    polaroid.addEventListener('mouseover', () => {
+      polaroid.style.transform = `translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 - 100}px)`;
+    });
+
+    polaroid.appendChild(image);
+    polaroid.appendChild(text);
+
+    document.body.appendChild(polaroid);
+  }
+
+  for (let i = 0; i < 20; i++) {
+    createBalloon();
+  }
+
+  images.forEach(img => createPolaroid(img.src, img.caption));
+</script>
+</body>
+
+</html>
